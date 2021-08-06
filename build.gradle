@@ -1,0 +1,90 @@
+plugins {
+    id 'java'
+}
+
+group 'org.apache'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // non-gadget dependencies
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.9'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'org.jboss.shrinkwrap.resolver', name: 'shrinkwrap-resolver-depchain', version: '2.2.6'
+    implementation group: 'org.javassist', name: 'javassist', version: '3.19.0-GA'
+    implementation group: 'com.nqzero', name: 'permit-reflect', version: '0.3'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.9'
+    implementation group: 'org.jenkins-ci.main', name: 'remoting', version: '2.55'
+    implementation group: 'org.jboss.logging', name: 'jboss-logging', version: '3.3.0.Final'
+    implementation group: 'org.jboss.remoting', name: 'jboss-remoting', version: '4.0.19.Final'
+    implementation group: 'org.jboss', name: 'jboss-common-core', version: '2.5.0.Final'
+    implementation group: 'org.jboss.xnio', name: 'xnio-nio', version: '3.3.4.Final'
+    implementation group: 'org.jboss.sasl', name: 'jboss-sasl', version: '1.0.5.Final'
+    implementation group: 'org.jboss.remotingjmx', name: 'remoting-jmx', version: '2.0.1.Final'
+
+    // gadget dependecies
+    implementation group: 'weblogic', name: 'coherence', version: '1.0'
+    implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '8.5.50'
+
+    implementation group: 'commons-collections', name: 'commons-collections', version: '3.1'
+    implementation group: 'org.beanshell', name: 'bsh', version: '2.0b5'
+    implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
+    implementation group: 'org.codehaus.groovy', name: 'groovy', version: '2.3.9'
+    implementation group: 'org.springframework', name: 'spring-core', version: '4.1.4.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-beans', version: '4.1.4.RELEASE'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '4.3.11.Final'
+    implementation group: 'org.springframework', name: 'spring-aop', version: '4.1.4.RELEASE'
+    implementation group: 'net.sf.json-lib', name: 'json-lib', version: '2.4'
+    implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.3'
+    implementation group: 'org.apache.wicket', name: 'wicket-util', version: '6.23.0'
+    implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.2'
+    implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    implementation group: 'org.apache.myfaces.core', name: 'myfaces-impl', version: '2.2.9'
+    implementation group: 'xalan', name: 'xalan', version: '2.7.2'
+    implementation group: 'rome', name: 'rome', version: '1.0'
+    implementation group: 'org.python', name: 'jython-standalone', version: '2.5.2'
+    implementation group: 'rhino', name: 'js', version: '1.7R2'
+    implementation group: 'javassist', name: 'javassist', version: '3.12.0.GA'
+    implementation group: 'org.jboss.weld', name: 'weld-core', version: '1.1.33.Final'
+    implementation group: 'org.jboss.interceptor', name: 'jboss-interceptor-core', version: '2.0.0.Final'
+    implementation group: 'org.jboss.interceptor', name: 'jboss-interceptor-spi', version: '2.0.0.Final'
+    implementation group: 'javax.enterprise', name: 'cdi-api', version: '1.0-SP1'
+    implementation group: 'javax.interceptor', name: 'javax.interceptor-api', version: '3.1'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    implementation group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.21'
+    implementation group: 'org.clojure', name: 'clojure', version: '1.8.0'
+    implementation group: 'com.vaadin', name: 'vaadin-server', version: '7.7.14'
+    implementation group: 'com.liferay.portal', name: 'com.liferay.portal.kernel', version: '3.39.2'
+    implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.0.7.Final'
+    implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
+    implementation group: 'org.mortbay.jasper', name: 'apache-el', version: '8.0.27'
+    implementation group: 'de.odysseus.juel', name: 'juel-impl', version: '2.2.7'
+    implementation group: 'de.odysseus.juel', name: 'juel-api', version: '2.2.7'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+def mainClassName = "mysocall.GeneratePayload"
+
+task runnbaleJar(type: Jar) {
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.output.resourcesDir)
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
