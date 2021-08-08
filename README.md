@@ -1,8 +1,10 @@
 ## Description
-Based on [mysocall](https://github.com/frohoff/ysoserial/tree/d367e379d961c18bff28fd2c888a2c8fe0dc6e63), do some change:
+Based on [ysoserial](https://github.com/frohoff/ysoserial/tree/d367e379d961c18bff28fd2c888a2c8fe0dc6e63), do some change:
 1. change from maven project to gradle project
 2. add CommonsBeanutils2 chain
 3. add output type: hex or base64
+
+Just for study.
 
 ## Disclaimer
 
