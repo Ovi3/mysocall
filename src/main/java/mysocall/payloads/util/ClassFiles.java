@@ -17,7 +17,7 @@ public class ClassFiles {
 			str = classAsFile(clazz.getEnclosingClass(), false) + "$" + clazz.getSimpleName();
 		}
 		if (suffix) {
-			str += ".class";			
+			str += ".class";
 		}
 		return str;  
 	}
