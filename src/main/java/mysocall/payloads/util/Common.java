@@ -18,8 +18,12 @@ public class Common {
         return stringBuffer.toString();
     }
 
-    public static byte[] replaceBytes(byte[] source, byte[] oldBytes, byte[] newBytes){
-        if(oldBytes == null || oldBytes.length == 0) {
+    public static byte[] replaceBytes(byte[] source, byte[] oldBytes, byte[] newBytes) {
+        return replaceBytesN(source, oldBytes, newBytes, -1);
+    }
+
+    public static byte[] replaceBytesN(byte[] source, byte[] oldBytes, byte[] newBytes, int replaceCount){
+        if(oldBytes == null || oldBytes.length == 0 || replaceCount == 0) {
             return Arrays.copyOfRange(source, 0, source.length);
         }
         if(newBytes == null) {
@@ -28,6 +32,7 @@ public class Common {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int i = 0;
+        int replace = 0;
         while(i < source.length){
             boolean equal = true;
             if (i + oldBytes.length <= source.length) {
@@ -45,6 +50,15 @@ public class Common {
                     bos.write(newByte);
                 }
                 i += oldBytes.length;
+
+
+                replace += 1;
+                if (replaceCount >= 1 && replace >= replaceCount) { // replace done
+                    for (int k = i; k < source.length; k+=1) {
+                        bos.write(source[k]);
+                    }
+                    break;
+                }
 
             } else {
                 bos.write(source[i]);
@@ -70,5 +84,14 @@ public class Common {
     public static String base64Encode(byte[] bytes){
         byte[] d = Base64.getEncoder().encode(bytes);
         return new String(d);
+    }
+
+    public static void main(String []args){
+        byte[] data = {(byte)0x01, (byte)0x02, (byte)0x01, (byte)0x02, (byte)0x01, (byte)0x02};
+        byte[] oldUid = {(byte) 0x01, (byte) 0x02};
+        byte[] newUid = {(byte) 0x11, (byte) 0x22, (byte) 0x33};
+        data = replaceBytes(data, oldUid, newUid);
+        System.out.println(bytesToHex(data));
+
     }
 }
